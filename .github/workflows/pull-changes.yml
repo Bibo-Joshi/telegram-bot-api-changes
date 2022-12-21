@@ -1,0 +1,49 @@
+name: Pull Changes from Telegram
+on:
+  schedule:
+    - cron: '42 */2 * * *'  # every 2 hours at 42 minutes
+  workflow_dispatch:
+  push:
+    branches:
+      - 'dev'
+
+jobs:
+  pull-changes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Install Requirements
+        run: |
+          python -W ignore -m pip install -U pip
+          python -W ignore -m pip install -U -r requirements.txt
+          npm install -g diff2html-cli@~5.2.6
+      - name: Set Git User to @actions
+        uses: fregante/setup-git-user@v1
+      - name: Pull Changes from Telegram
+        run: |
+          python pull_changes.py -T ${{ secrets.TELEGRAM_TOKEN }} -L "reference"
+          
+          git add .
+          git commit -am "Update Reference Documentation" || true
+          
+          python pull_changes.py -T ${{ secrets.TELEGRAM_TOKEN }} -L "supplementary"
+          
+          git add .
+          git commit -am "Update Reference Documentation" || true
+      - name: Push Changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+          force: true
+          
