@@ -31,12 +31,12 @@ jobs:
         run: |
           git config --local user.name ${{ github.actor }}
           
-          python -m pull_changes.py -T ${{ secrets.TELEGRAM_TOKEN }} -L "reference"
+          python pull_changes.py -T ${{ secrets.TELEGRAM_TOKEN }} -L "reference"
           
           git add .
           git commit -am "Update Reference Documentation" || true
           
-          python -m pull_changes.py -T ${{ secrets.TELEGRAM_TOKEN }} -L "supplementary"
+          python pull_changes.py -T ${{ secrets.TELEGRAM_TOKEN }} -L "supplementary"
           
           git add .
           git commit -am "Update Reference Documentation" || true
