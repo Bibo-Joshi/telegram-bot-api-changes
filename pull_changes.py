@@ -114,10 +114,15 @@ def main(token: str, change_list: ChangeList) -> None:
 
     title = f"Changes in {title}"
 
+    print("This is main with values", urls, title, filename)
+
     caption_urls = "\n".join((f"• <a href='{url}'>{get_file_name(url)}</a>" for url in urls))
     caption = f"{title} since last update. Tracked pages:\n\n{caption_urls}"
 
     asyncio.run(download_all(urls=urls))
+
+    print("Downloaded all files")
+
     if html_data := diff_2_html(title=title):
         print("Changes detected. Sending to Telegram.")
         print(html_data.decode("utf-8"))
@@ -130,9 +135,11 @@ def main(token: str, change_list: ChangeList) -> None:
                 caption=caption,
             )
         )
+    print("No changes detected. Exiting from main.")
 
 
 if __name__ == "__main__":
+    print("Starting script.")
     parser = ArgumentParser()
     parser.add_argument("-T", "--token", type=str, required=True)
     parser.add_argument(
@@ -144,4 +151,5 @@ if __name__ == "__main__":
     )
 
     arguments = parser.parse_args()
+    print("Arguments parsed.")
     main(token=arguments.token, change_list=ChangeList(arguments.change_list))
