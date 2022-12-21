@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -28,9 +28,8 @@ jobs:
           python -W ignore -m pip install -U -r requirements.txt
           npm install -g diff2html-cli@~5.2.6
       - name: Pull Changes from Telegram
+        uses: fregante/setup-git-user@v1
         run: |
-          git config --local user.name ${{ github.actor }}
-          
           python pull_changes.py -T ${{ secrets.TELEGRAM_TOKEN }} -L "reference"
           
           git add .

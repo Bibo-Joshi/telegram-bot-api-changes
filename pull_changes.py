@@ -119,6 +119,8 @@ def main(token: str, change_list: ChangeList) -> None:
 
     asyncio.run(download_all(urls=urls))
     if html_data := diff_2_html(title=title):
+        print("Changes detected. Sending to Telegram.")
+        print(html_data.decode("utf-8"))
         asyncio.run(
             send_to_telegram(
                 token=token,
