@@ -75,7 +75,6 @@ def diff_2_html(title: str) -> bytes | None:
                 "--title",
                 full_title,
             ],
-            shell=True,
             check=True,
             capture_output=True,
         )
