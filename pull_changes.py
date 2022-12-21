@@ -43,7 +43,7 @@ PAGE_GENERATION_TIME_REGEX = re.compile(r"<!-- page generated in \d+\.\d+m?s -->
 
 
 def get_file_name(url: str) -> str:
-    return url.replace("https://", "").replace("/", ".").replace(".telegram.org", "")
+    return f'{url.replace("https://", "").replace("/", ".").replace(".telegram.org", "")}.html'
 
 
 def remove_page_generation_time(html: str) -> str:
@@ -54,18 +54,18 @@ async def download_one(url: str, client: AsyncClient) -> None:
     response = await client.get(url)
     if response.status_code != HTTPStatus.OK:
         raise RuntimeError(f"Failed to download {url}: {response.status_code}")
-    with open(f"{get_file_name(url)}.html", "w", encoding="utf-8") as f:
+    with open(f"{get_file_name(url)}", "w", encoding="utf-8") as f:
         f.write(remove_page_generation_time(response.text))
 
 
 async def download_all(urls: Collection[str]) -> None:
-    async with AsyncClient() as client:
+    async with AsyncClient(timeout=20) as client:
         await asyncio.gather(*(download_one(url, client) for url in urls))
 
 
 def diff_2_html(title: str) -> bytes | None:
     full_title = (
-        f"{title} on {datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M')} UTC"
+        f"Changes in {title} on {datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M')} UTC"
     )
     try:
         completed_process = subprocess.run(
@@ -102,6 +102,9 @@ async def send_to_telegram(
             filename=filename,
             caption=caption,
             parse_mode=ParseMode.HTML,
+            write_timeout=60,
+            connect_timeout=60,
+            read_timeout=60
         )
 
 
@@ -115,8 +118,7 @@ def main(token: str, change_list: ChangeList) -> None:
         title = "Reference Docs"
         filename = "reference_docs.html"
 
-    title = f"Changes in {title}"
-    caption_base = f"{title} since last update. Changed pages:\n\n"
+    caption_base = f"Changed <i>{title}</i>:\n\n"
 
     asyncio.run(download_all(urls=urls))
 
