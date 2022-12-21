@@ -27,8 +27,9 @@ jobs:
           python -W ignore -m pip install -U pip
           python -W ignore -m pip install -U -r requirements.txt
           npm install -g diff2html-cli@~5.2.6
-      - name: Pull Changes from Telegram
+      - name: Set Git User to @actions
         uses: fregante/setup-git-user@v1
+      - name: Pull Changes from Telegram
         run: |
           python pull_changes.py -T ${{ secrets.TELEGRAM_TOKEN }} -L "reference"
           
