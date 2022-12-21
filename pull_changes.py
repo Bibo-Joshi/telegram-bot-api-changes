@@ -1,33 +1,37 @@
 import asyncio
 import datetime
+import platform
 import re
 import subprocess
 from argparse import ArgumentParser
+from collections.abc import Collection
 from enum import StrEnum
 from http import HTTPStatus
-
-from collections.abc import Collection
 
 from httpx import AsyncClient
 from telegram import Bot
 from telegram.constants import ParseMode
 
-REFERENCE_LINKS = sorted({
-    "https://core.telegram.org/bots/api",
-    "https://core.telegram.org/bots/payments",
-    "https://core.telegram.org/passport",
-    "https://core.telegram.org/bots/webapps",
-})
+REFERENCE_LINKS = sorted(
+    {
+        "https://core.telegram.org/bots/api",
+        "https://core.telegram.org/bots/payments",
+        "https://core.telegram.org/passport",
+        "https://core.telegram.org/bots/webapps",
+    }
+)
 
-SUPPLEMENTARY_LINKS = sorted({
-    "https://core.telegram.org/bots",
-    "https://core.telegram.org/bots/faq",
-    "https://core.telegram.org/bots/webhooks",
-    "https://core.telegram.org/bots/self-signed",
-    "https://corefork.telegram.org/api/links",
-    "https://core.telegram.org/bots/features",
-    "https://core.telegram.org/bots/samples",
-})
+SUPPLEMENTARY_LINKS = sorted(
+    {
+        "https://core.telegram.org/bots",
+        "https://core.telegram.org/bots/faq",
+        "https://core.telegram.org/bots/webhooks",
+        "https://core.telegram.org/bots/self-signed",
+        "https://corefork.telegram.org/api/links",
+        "https://core.telegram.org/bots/features",
+        "https://core.telegram.org/bots/samples",
+    }
+)
 
 
 class ChangeList(StrEnum):
@@ -77,12 +81,12 @@ def diff_2_html(title: str) -> bytes | None:
             ],
             check=True,
             capture_output=True,
+            shell=platform.system() == "Windows",
         )
 
         return completed_process.stdout
     except subprocess.CalledProcessError as exc:
         if exc.returncode == 3:
-            print("No changes detected. Exiting.")
             return None
         else:
             raise exc
@@ -112,33 +116,29 @@ def main(token: str, change_list: ChangeList) -> None:
         filename = "reference_docs.html"
 
     title = f"Changes in {title}"
-
-    print("This is main with values", urls, title, filename)
-
-    caption_urls = "\n".join((f"• <a href='{url}'>{get_file_name(url)}</a>" for url in urls))
-    caption = f"{title} since last update. Tracked pages:\n\n{caption_urls}"
+    caption_base = f"{title} since last update. Changed pages:\n\n"
 
     asyncio.run(download_all(urls=urls))
 
-    print("Downloaded all files")
-
     if html_data := diff_2_html(title=title):
-        print("Changes detected. Sending to Telegram.")
-        print(html_data.decode("utf-8"))
+        html_text = html_data.decode("utf-8")
+        caption_urls = "\n".join(
+                f"• <a href='{url}'>{url_file_name}</a>"
+                for url in urls
+                if (url_file_name := get_file_name(url)) in html_text
+        )
         asyncio.run(
             send_to_telegram(
                 token=token,
                 chat_id="@bot_api_changes",
                 html_data=html_data,
                 filename=filename,
-                caption=caption,
+                caption=f"{caption_base}{caption_urls}",
             )
         )
-    print("No changes detected. Exiting from main.")
 
 
 if __name__ == "__main__":
-    print("Starting script.")
     parser = ArgumentParser()
     parser.add_argument("-T", "--token", type=str, required=True)
     parser.add_argument(
@@ -150,5 +150,4 @@ if __name__ == "__main__":
     )
 
     arguments = parser.parse_args()
-    print("Arguments parsed.")
     main(token=arguments.token, change_list=ChangeList(arguments.change_list))
