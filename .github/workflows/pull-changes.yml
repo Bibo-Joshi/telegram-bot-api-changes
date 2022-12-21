@@ -40,8 +40,8 @@ jobs:
           
           git add .
           git commit -am "Update Reference Documentation" || true
-      - name: Push changes
-        uses: ad-m/github-push-action@v0.6
+      - name: Push Changes
+        uses: ad-m/github-push-action@v0.6.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           force: true
