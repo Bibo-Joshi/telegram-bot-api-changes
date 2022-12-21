@@ -12,34 +12,17 @@ from httpx import AsyncClient
 from telegram import Bot
 from telegram.constants import ParseMode
 
-REFERENCE_LINKS = sorted(
-    {
-        "https://core.telegram.org/bots/api",
-        "https://core.telegram.org/bots/payments",
-        "https://core.telegram.org/passport",
-        "https://core.telegram.org/bots/webapps",
-    }
-)
-
-SUPPLEMENTARY_LINKS = sorted(
-    {
-        "https://core.telegram.org/bots",
-        "https://core.telegram.org/bots/faq",
-        "https://core.telegram.org/bots/webhooks",
-        "https://core.telegram.org/bots/self-signed",
-        "https://corefork.telegram.org/api/links",
-        "https://core.telegram.org/bots/features",
-        "https://core.telegram.org/bots/samples",
-    }
-)
-
-
 class ChangeList(StrEnum):
     SUPPLEMENTARY = "supplementary"
     REFERENCE = "reference"
 
 
 PAGE_GENERATION_TIME_REGEX = re.compile(r"<!-- page generated in \d+\.\d+m?s -->")
+
+
+def get_urls(change_list: ChangeList) -> list[str]:
+    with open(f"{change_list.value}_links.txt", "r", encoding="utf-8") as f:
+        return [url.strip() for url in f.readlines()]
 
 
 def get_file_name(url: str) -> str:
@@ -110,14 +93,13 @@ async def send_to_telegram(
 
 def main(token: str, change_list: ChangeList) -> None:
     if change_list == ChangeList.SUPPLEMENTARY:
-        urls = SUPPLEMENTARY_LINKS
         title = "Supplementary Docs"
         filename = "supplementary_docs.html"
     else:
-        urls = REFERENCE_LINKS
         title = "Reference Docs"
         filename = "reference_docs.html"
 
+    urls = get_urls(change_list)
     caption_base = f"Changed <i>{title}</i>:\n\n"
 
     asyncio.run(download_all(urls=urls))
