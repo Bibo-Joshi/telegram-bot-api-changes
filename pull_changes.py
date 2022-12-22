@@ -17,7 +17,7 @@ class ChangeList(StrEnum):
     REFERENCE = "reference"
 
 
-PAGE_GENERATION_TIME_REGEX = re.compile(r"<!-- page generated in \d+\.\d+m?s -->")
+PAGE_GENERATION_TIME_REGEX = re.compile(r"<!-- page generated in \d+(\.\d+)?m?s -->")
 PAYMENT_AMOUNTS_REGEX = re.compile(r"<td>[^<\d]+\d[\d,.]+\d</td>")
 
 
