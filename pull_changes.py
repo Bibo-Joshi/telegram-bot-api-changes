@@ -18,6 +18,7 @@ class ChangeList(StrEnum):
 
 
 PAGE_GENERATION_TIME_REGEX = re.compile(r"<!-- page generated in \d+\.\d+m?s -->")
+PAYMENT_AMOUNTS_REGEX = re.compile(r"<td>[^<\d]+\d[\d,.]+\d</td>")
 
 
 def get_urls(change_list: ChangeList) -> list[str]:
@@ -37,12 +38,20 @@ def remove_page_generation_time(html: str) -> str:
     return re.sub(PAGE_GENERATION_TIME_REGEX, "", html)
 
 
+def remove_payment_amounts(html: str) -> str:
+    return re.sub(PAYMENT_AMOUNTS_REGEX, "", html)
+
+
+def sanitize_html(html: str) -> str:
+    return remove_payment_amounts(remove_page_generation_time(html))
+
+
 async def download_one(url: str, client: AsyncClient) -> None:
     response = await client.get(url)
     if response.status_code != HTTPStatus.OK:
         raise RuntimeError(f"Failed to download {url}: {response.status_code}")
     with open(f"{get_file_name(url)}", "w", encoding="utf-8") as f:
-        f.write(remove_page_generation_time(response.text))
+        f.write(sanitize_html(response.text))
 
 
 async def download_all(urls: Collection[str]) -> None:
