@@ -12,13 +12,43 @@ from httpx import AsyncClient
 from telegram import Bot
 from telegram.constants import ParseMode
 
+
 class ChangeList(StrEnum):
     SUPPLEMENTARY = "supplementary"
     REFERENCE = "reference"
 
 
 PAGE_GENERATION_TIME_REGEX = re.compile(r"<!-- page generated in \d+(\.\d+)?m?s -->")
-PAYMENT_AMOUNTS_REGEX = re.compile(r"<td>[^<\d]+\d[\d,.]+\d</td>")
+CURRENCY_TABLE_REGEX = re.compile(
+    r"""
+    # Match the header of the payment amount table
+    <thead>\s*
+        <tr>\s*
+        <th>Code</th>\s*
+        <th>Title</th>\s*
+        <th>Min\ amount</th>\s*
+        <th>Max\ amount</th>\s*
+        </tr>\s*
+    </thead>\s*
+    <tbody>\s*
+    ([\s\S](?!</tbody>))+ # Match all chars until the end of the table
+    > # Closing bracet of the last rew
+    </tbody> # Closing tag of the table
+    """,
+    re.VERBOSE,
+)
+PAYMENT_AMOUNTS_REGEX = re.compile(
+    r"""
+    <td> # Opening tag of the column
+    (
+        ([^<\d]+\d[\d,\.'\-;\s]+\d) # Either first currency abbreviation and then amount
+        | # or
+        (\d[\d,\.'\-;\s]+\d[^<\d]+) # first amount and then currency abbreviation
+    )
+    </td> # Closing tag of the column
+    """,
+    re.VERBOSE
+)
 
 
 def get_urls(change_list: ChangeList) -> list[str]:
@@ -39,7 +69,11 @@ def remove_page_generation_time(html: str) -> str:
 
 
 def remove_payment_amounts(html: str) -> str:
-    return re.sub(PAYMENT_AMOUNTS_REGEX, "", html)
+    if not (match := re.search(CURRENCY_TABLE_REGEX, html)):
+        return html
+    table = match.group(0)
+    empty_table = re.sub(PAYMENT_AMOUNTS_REGEX, "<td></td>", table)
+    return html.replace(table, empty_table)
 
 
 def sanitize_html(html: str) -> str:
@@ -100,7 +134,7 @@ async def send_to_telegram(
             parse_mode=ParseMode.HTML,
             write_timeout=60,
             connect_timeout=60,
-            read_timeout=60
+            read_timeout=60,
         )
 
 
@@ -120,9 +154,9 @@ def main(token: str, change_list: ChangeList) -> None:
     if html_data := diff_2_html(title=title):
         html_text = html_data.decode("utf-8")
         caption_urls = "\n".join(
-                f"• <a href='{url}'>{get_file_name_base(url)}</a>"
-                for url in urls
-                if get_file_name(url) in html_text
+            f"• <a href='{url}'>{get_file_name_base(url)}</a>"
+            for url in urls
+            if get_file_name(url) in html_text
         )
         asyncio.run(
             send_to_telegram(
