@@ -111,9 +111,9 @@ def main(token: str, change_list: ChangeList) -> None:
     if html_data := diff_2_html(title=title):
         html_text = html_data.decode("utf-8")
         caption_urls = "\n".join(
-                f"• <a href='{url}'>{url_file_name}</a>"
+                f"• <a href='{url}'>{get_file_name_base(url)}</a>"
                 for url in urls
-                if (url_file_name := get_file_name_base(url)) in html_text
+                if get_file_name(url) in html_text
         )
         asyncio.run(
             send_to_telegram(
