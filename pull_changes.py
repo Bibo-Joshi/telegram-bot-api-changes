@@ -25,8 +25,12 @@ def get_urls(change_list: ChangeList) -> list[str]:
         return [url.strip() for url in f.readlines()]
 
 
+def get_file_name_base(url: str) -> str:
+    return f'{url.replace("https://", "").replace("/", ".").replace(".telegram.org", "")}'
+
+
 def get_file_name(url: str) -> str:
-    return f'{url.replace("https://", "").replace("/", ".").replace(".telegram.org", "")}.html'
+    return f"{get_file_name_base(url)}.html"
 
 
 def remove_page_generation_time(html: str) -> str:
@@ -109,7 +113,7 @@ def main(token: str, change_list: ChangeList) -> None:
         caption_urls = "\n".join(
                 f"• <a href='{url}'>{url_file_name}</a>"
                 for url in urls
-                if (url_file_name := get_file_name(url)) in html_text
+                if (url_file_name := get_file_name_base(url)) in html_text
         )
         asyncio.run(
             send_to_telegram(

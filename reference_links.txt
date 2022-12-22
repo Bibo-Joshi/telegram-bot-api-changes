@@ -1,4 +1,3 @@
 https://core.telegram.org/bots/api
-https://core.telegram.org/bots/payments
 https://core.telegram.org/passport
 https://core.telegram.org/bots/webapps

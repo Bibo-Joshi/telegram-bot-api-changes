@@ -5,3 +5,4 @@ https://core.telegram.org/bots/self-signed
 https://corefork.telegram.org/api/links
 https://core.telegram.org/bots/features
 https://core.telegram.org/bots/samples
+https://core.telegram.org/bots/payments
