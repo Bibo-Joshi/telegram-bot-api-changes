@@ -47,13 +47,13 @@ PAYMENT_AMOUNTS_REGEX = re.compile(
     )
     </td> # Closing tag of the column
     """,
-    re.VERBOSE
+    re.VERBOSE,
 )
 
 
 def get_urls(change_list: ChangeList) -> list[str]:
-    with open(f"{change_list.value}_links.txt", "r", encoding="utf-8") as f:
-        return [url.strip() for url in f.readlines()]
+    with open(f"{change_list.value}_links.txt", encoding="utf-8") as file:
+        return [url.strip() for url in file.readlines()]
 
 
 def get_file_name_base(url: str) -> str:
@@ -84,8 +84,8 @@ async def download_one(url: str, client: AsyncClient) -> None:
     response = await client.get(url)
     if response.status_code != HTTPStatus.OK:
         raise RuntimeError(f"Failed to download {url}: {response.status_code}")
-    with open(f"{get_file_name(url)}", "w", encoding="utf-8") as f:
-        f.write(sanitize_html(response.text))
+    with open(f"{get_file_name(url)}", "w", encoding="utf-8") as file:
+        file.write(sanitize_html(response.text))
 
 
 async def download_all(urls: Collection[str]) -> None:
@@ -118,8 +118,7 @@ def diff_2_html(title: str) -> bytes | None:
     except subprocess.CalledProcessError as exc:
         if exc.returncode == 3:
             return None
-        else:
-            raise exc
+        raise exc
 
 
 async def send_to_telegram(
