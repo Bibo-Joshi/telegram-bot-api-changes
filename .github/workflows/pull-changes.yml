@@ -26,7 +26,8 @@ jobs:
         run: |
           python -W ignore -m pip install -U pip
           python -W ignore -m pip install -U -r requirements.txt
-          npm install -g diff2html-cli@~5.2.6
+          npm install -g diff2html-cli@~5.2.13
+          npm install -g tslib@~2.6.1
       - name: Set Git User to @actions
         uses: fregante/setup-git-user@v1
       - name: Pull Changes from Telegram

@@ -118,6 +118,8 @@ def diff_2_html(title: str) -> bytes | None:
     except subprocess.CalledProcessError as exc:
         if exc.returncode == 3:
             return None
+        if exc.stderr:
+            print(exc.stderr.decode("utf-8"))
         raise exc
 
 
