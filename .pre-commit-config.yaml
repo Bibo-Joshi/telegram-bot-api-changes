@@ -6,7 +6,7 @@ ci:
 
 repos:
 -   repo: https://github.com/psf/black
-    rev: 23.11.0
+    rev: 23.12.1
     hooks:
     -   id: black
         args:
@@ -17,7 +17,7 @@ repos:
     hooks:
     -   id: flake8
 -   repo: https://github.com/PyCQA/pylint
-    rev: v3.0.1
+    rev: v3.0.3
     hooks:
     -   id: pylint
         args:
@@ -29,7 +29,7 @@ repos:
           - httpx~=0.23.1
           - python-telegram-bot-raw~=20.0b0
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.7.1
+    rev: v1.8.0
     hooks:
     -   id: mypy
         name: mypy
@@ -43,7 +43,7 @@ repos:
         args:
           - --py310-plus
 -   repo: https://github.com/pycqa/isort
-    rev: 5.12.0
+    rev: 5.13.2
     hooks:
     -   id: isort
         name: isort
