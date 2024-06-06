@@ -50,17 +50,15 @@
 
 <p><strong>Telegram Bot Payments</strong> are a free and open platform that allows sellers to accept payments for goods and services from Telegram users. Telegram doesn&#39;t collect payment information and takes <strong>no commission</strong>. This page covers payments for <strong>physical goods and services</strong> – if you’re interested in selling <strong>digital goods and services</strong>, please check out our <a href="https://core.telegram.org/bots/payments-stars">dedicated page</a>.</p>
 <blockquote>
-<p><strong>Note:</strong> This article is intended for bot developers and store owners. If you&#39;re looking for a general overview of Telegram Payments, check out the <a href="https://telegram.org/blog/payments-2-0-scheduled-voice-chats#payments-2-0">Telegram blog</a>.</p>
+<p><strong>Note:</strong> This article is intended for bot developers and store owners. If you&#39;re looking for a general overview of Telegram Payments for physical goods and services, check out the <a href="https://telegram.org/blog/payments-2-0-scheduled-voice-chats#payments-2-0">Telegram blog</a>.</p>
 </blockquote>
 <p>If you are new to Telegram bots and would like to learn how to create and set up a bot, please consult our <a href="https://core.telegram.org/bots"><strong>Introduction to Bots</strong></a> and <a href="/bots/faq"><strong>Bot FAQ</strong></a>.</p>
-<h3><a class="anchor" name="introducing-payments-2-0" href="#introducing-payments-2-0"><i class="anchor-icon"></i></a>Introducing Payments 2.0</h3>
-<p><a href="https://telegram.org/blog/payments-2-0-scheduled-voice-chats">Payments 2.0</a> were added in April 2021 with <a href="/bots/api">Bot API v.5.2</a>. New features:</p>
+<h3><a class="anchor" name="payments-for-physical-products" href="#payments-for-physical-products"><i class="anchor-icon"></i></a>Payments for Physical Products</h3>
+<p>Payments for physical goods and services were first added to Telegram in <a href="https://telegram.org/evolution#may-2017">2017</a> and allow bots to:</p>
 <ul>
-<li>Send invoices to <strong>any chat</strong>, including to groups and channels.</li>
-<li>Create invoices that can be <strong>forwarded</strong> and used by <strong>multiple buyers</strong> to order things.</li>
-<li>Use <a href="/bots/inline">inline mode</a> to help users show your goods and services to their friends and communities.</li>
-<li>Allow <strong>tips</strong> from users with preset and custom amounts.</li>
-<li>Accept payments from users on mobile or <strong>desktop apps</strong>.</li>
+<li>Accept payments from over <strong>200 countries</strong> using more than 20 providers.</li>
+<li>Send invoices to <strong>any chat</strong>, including groups and channels.</li>
+<li>Receive payments from users on mobile or <strong>desktop apps</strong>.</li>
 <li>Try <a href="https://t.me/shopbot">@ShopBot</a> to create a test invoice – or start a message with <code>@ShopBot ...</code> in any chat for an <strong>inline invoice</strong>.</li>
 <li>Check out <a href="https://t.me/teststore">Demo Shop</a> for an example of a <a href="https://telegram.org/tour/channels">Telegram Channel</a> used as <strong>virtual storefront</strong>.</li>
 </ul>
@@ -71,7 +69,7 @@
 </div>
 
 <blockquote>
-<p>Users need to update to <strong>Telegram 7.7</strong> or higher to use <strong>Payments 2.0</strong> (for <a href="https://desktop.telegram.org">Telegram Desktop</a>, <strong>2.7.2</strong> or higher). Older <em>mobile</em> apps released after <a href="https://telegram.org/blog/payments">May 2017</a> support basic payments in chats with bots.</p>
+<p>Check out <a href="https://t.me/shopbot">@ShopBot</a> for an example of a virtual storefront – then use our dedicated guides for <a href="https://core.telegram.org/bots/payments-stars">digital</a> and <a href="https://core.telegram.org/bots/payments">physical</a> products to build your own.</p>
 </blockquote>
 <h4><a class="anchor" name="how-does-this-work" href="#how-does-this-work"><i class="anchor-icon"></i></a>How does this work?</h4>
 <p>You create a <strong>bot</strong> that offers goods and services to Telegram users. Merchant bots can send specially formatted <strong>invoice messages</strong> to users, groups or channels. If your bot supports <a href="/bots/inline">inline mode</a>, users can also send invoices to other chats <em>via the bot</em>, including to one-on-one chats with other users.</p>
@@ -146,7 +144,7 @@
 <p>The user contacts <code>@merchantbot</code> and requests to purchase something. The bot forms an invoice message with a description of the goods or service, amount to be paid, and requested shipping info. There are two ways of creating an invoice:</p>
 <h5><a class="anchor" name="a-bot-invoice" href="#a-bot-invoice"><i class="anchor-icon"></i></a>A. Bot Invoice</h5>
 <p>Use the <a href="/bots/api#sendinvoice">sendInvoice</a> method to generate an invoice and send it to a chat. The <em>provider_token</em> parameter is where you put the <em>token</em> value that you&#39;ve <a href="#getting-a-token">obtained earlier via Botfather</a>. It is possible for one merchant bot to use several different tokens for different users or different goods and services.</p>
-<p>As of <a href="#introducing-payments-2-0">Payments 2.0</a>, invoice messages with a pay button can be sent to <strong>chats of any type</strong>: private chats with the user, groups, or channels. The resulting invoice message will look like this:</p>
+<p>Invoice messages with a pay button can be sent to <strong>chats of any type</strong>: private chats with the user, groups, or channels. The resulting invoice message will look like this:</p>
  <div class="blog_image_wrap">
     <a href="/file/464001285/4/UBRF1ViiEOU.106159/0bbcdcb7f5af77a782" target="_blank"><img src="/file/464001285/4/UBRF1ViiEOU.106159/0bbcdcb7f5af77a782" title="Join button"/></a>
     <p>Bot Invoice</p>  </div>
@@ -158,7 +156,7 @@
     <p>Inline Invoice</p>  </div>
 
 <h4><a class="anchor" name="2-choose-forwarding-behavior" href="#2-choose-forwarding-behavior"><i class="anchor-icon"></i></a>2. Choose Forwarding Behavior</h4>
-<p>As of <a href="#introducing-payments-2-0">Payments 2.0</a> there are two ways for handling <strong>forwarded copies</strong> of your invoices, controlled by the parameter <em>start_parameter</em> in the <a href="/bots/api#sendinvoice">sendInvoice</a> method.</p>
+<p>There are two ways for handling <strong>forwarded copies</strong> of your invoices, controlled by the parameter <em>start_parameter</em> in the <a href="/bots/api#sendinvoice">sendInvoice</a> method.</p>
 <ul>
 <li><strong>A. Multi-chat invoice.</strong> Forwarded copies show a <strong>Pay button</strong>, which multiple users can press and attempt to pay for the goods or services. <a href="#b-inline-invoice">Inline invoices</a> are always multi-chat invoices.</li>
 <li><strong>B. Single-chat invoice.</strong> Invoice can only be paid from the chat to which it was sent, <em>forwarded copies</em> show a <strong>URL button</strong> with a deep link to the bot. The deep link can be used to generate a similar invoice in the chat with the bot, to show an error message, or for other purposes. <a href="/bots#deep-linking">More info on Deep Linking »</a></li>
@@ -195,7 +193,7 @@
 <p>The user enters their payment information and presses the final pay button. At this moment the Bot API sends an <a href="/bots/api#update">Update</a> with the field <em>pre_checkout_query</em> to the bot that contains all the available information about the order. Your bot must reply using <a href="/bots/api#answerprecheckoutquery">answerPrecheckoutQuery</a> within <strong>10 seconds</strong> after receiving this update or the transaction is canceled.</p>
 <p>The bot may return an error if it can&#39;t process the order for any reason. We highly recommend specifying a reason for failure to complete the order in human readable form (e.g. <em>&quot;Sorry, we&#39;re all out of rubber ducks! Would you be interested in a cast iron bear instead?&quot;</em>). Telegram will display this reason to the user.</p>
 <blockquote>
-<p><strong>Warning:</strong> As of <a href="#introducing-payments-2-0">Payments 2.0</a>, it is critical to make sure your bot <strong>only</strong> accepts multiple payments when the order can be processed correctly. This is especially important if you are using <a href="#2-choose-forwarding-behavior">multi-chat</a>, <a href="#2-choose-forwarding-behavior">inline</a> or <a href="#2-choose-forwarding-behavior">single-chat, multi-use</a> invoices.</p>
+<p><strong>Warning:</strong> It is critical to make sure your bot <strong>only</strong> accepts multiple payments when the order can be processed correctly. This is especially important if you are using <a href="#2-choose-forwarding-behavior">multi-chat</a>, <a href="#2-choose-forwarding-behavior">inline</a> or <a href="#2-choose-forwarding-behavior">single-chat, multi-use</a> invoices.</p>
 </blockquote>
 <h4><a class="anchor" name="8-checkout" href="#8-checkout"><i class="anchor-icon"></i></a>8. Checkout</h4>
 <p>In case the bot confirms the order, Telegram requests the payment provider to complete the transaction. If the payment information was entered correctly and the payment goes through, the API will send a receipt message of the type <a href="/bots/api#message"><em>successful_payment</em></a> from the user. Once your bot receives this message, it should proceed with delivering the goods or services purchased by the user.</p>
