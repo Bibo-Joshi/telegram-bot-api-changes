@@ -41,9 +41,9 @@ PAYMENT_AMOUNTS_REGEX = re.compile(
     r"""
     <td> # Opening tag of the column
     (
-        ([^<\d]+\d[\d,\.'\-;\s]+\d) # Either first currency abbreviation and then amount
+        ([^<\d]+\d[\d/,\.'\-;\s\u00A0\u2007\u202F]+\d) # Either first currency abbreviation and then amount
         | # or
-        (\d[\d,\.'\-;\s]+\d[^<\d]+) # first amount and then currency abbreviation
+        (\d[\d/,\.'\-;\s\u00A0\u2007\u202F]+\d[^<\d]+) # first amount and then currency abbreviation
     )
     </td> # Closing tag of the column
     """,
@@ -72,6 +72,8 @@ def remove_payment_amounts(html: str) -> str:
     if not (match := re.search(CURRENCY_TABLE_REGEX, html)):
         return html
     table = match.group(0)
+    for match in re.finditer(PAYMENT_AMOUNTS_REGEX, table):
+        print(match.group(0))
     empty_table = re.sub(PAYMENT_AMOUNTS_REGEX, "<td></td>", table)
     return html.replace(table, empty_table)
 
