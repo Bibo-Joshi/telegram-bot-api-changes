@@ -21,13 +21,13 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
       - name: Install Requirements
         run: |
           python -W ignore -m pip install -U pip
           python -W ignore -m pip install -U -r requirements.txt
-          npm install -g diff2html-cli@~5.2.13
-          npm install -g tslib@~2.6.1
+          npm install -g diff2html-cli@~5.2.15
+          npm install -g tslib@~2.8.1
       - name: Set Git User to @actions
         uses: fregante/setup-git-user@v1
       - name: Pull Changes from Telegram
