@@ -1,7 +1,7 @@
 name: Pull Changes from Telegram
 on:
   schedule:
-    - cron: '42 */2 * * *'  # every 2 hours at 42 minutes
+    - cron: '42 */10 * * *'  # every 10th hours at 42 minutes
   workflow_dispatch:
   push:
     branches:
